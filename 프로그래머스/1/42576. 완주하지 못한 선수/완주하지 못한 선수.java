@@ -5,11 +5,7 @@ class Solution {
         HashMap<String, Integer> participantHashMap = new HashMap<>();
         
         Arrays.stream(participant).forEach(p -> {
-            if(participantHashMap.containsKey(p)){
-                participantHashMap.put(p, participantHashMap.get(p) + 1);
-                return;
-            }
-            participantHashMap.put(p, 1);
+            participantHashMap.put(p, participantHashMap.getOrDefault(p, 0) + 1);
         });
         
         Arrays.stream(completion).forEach(c -> {
