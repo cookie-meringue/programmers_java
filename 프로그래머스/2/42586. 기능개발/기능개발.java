@@ -8,7 +8,7 @@ class Solution {
             int value = progresses[i];
             int days = (int) Math.ceil((100 - value) / (float)speeds[i]);
     
-            for(int j = i; j<progresses.length; j++){
+            for(int j = i; j < progresses.length; j++){
                 progresses[j] += speeds[j] * days;
             }
             
