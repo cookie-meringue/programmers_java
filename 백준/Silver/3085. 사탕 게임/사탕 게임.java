@@ -8,21 +8,22 @@ public class Main {
         int n = Integer.parseInt(scanner.nextLine());
         char[][] arr = inputArr(n);
 
-        int max = 1;
+        int max = getMaxCount(arr, n); // 초기 상태에서도 최댓값일 수 있음
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (i < n - 1) {
-                    max = Math.max(max, getMaxCount(getSwitchedArr(arr, n, i, j, i + 1, j), n, i, j));
+                // 오른쪽 교환
+                if (j + 1 < n && arr[i][j] != arr[i][j + 1]) {
+                    swap(arr, i, j, i, j + 1);
+                    max = Math.max(max, getMaxCount(arr, n));
+                    swap(arr, i, j, i, j + 1); // 원복
                 }
-                if (i > 0) {
-                    max = Math.max(max, getMaxCount(getSwitchedArr(arr, n, i, j, i - 1, j), n, i, j));
-                }
-                if (j > 0) {
-                    max = Math.max(max, getMaxCount(getSwitchedArr(arr, n, i, j, i, j - 1), n, i, j));
-                }
-                if (j < n - 1) {
-                    max = Math.max(max, getMaxCount(getSwitchedArr(arr, n, i, j, i, j + 1), n, i, j));
+
+                // 아래쪽 교환
+                if (i + 1 < n && arr[i][j] != arr[i + 1][j]) {
+                    swap(arr, i, j, i + 1, j);
+                    max = Math.max(max, getMaxCount(arr, n));
+                    swap(arr, i, j, i + 1, j); // 원복
                 }
             }
         }
@@ -30,31 +31,39 @@ public class Main {
         System.out.println(max);
     }
 
-    public static int getMaxCount(char[][] arr, int n, int i, int j) {
-        int max = 1;
-
-        int maxHorizontalCount = getMaxHorizontalCount(arr, n, i);
-        int maxVerticalCount = getMaxVerticalCount(arr, n, j);
-//        int maxDiagonalCount = getMaxDiagonalCount(arr, n, i, j);
-
-        max = Math.max(max, maxHorizontalCount);
-        max = Math.max(max, maxVerticalCount);
-//        max = Math.max(max, maxDiagonalCount);
-
-        return max;
+    private static void swap(char[][] arr, int x1, int y1, int x2, int y2) {
+        char temp = arr[x1][y1];
+        arr[x1][y1] = arr[x2][y2];
+        arr[x2][y2] = temp;
     }
 
-    public static char[][] getSwitchedArr(char[][] arr, int n, int fromX, int fromY, int toX, int toY) {
-        char[][] result = new char[n][n];
+    public static int getMaxCount(char[][] arr, int n) {
+        int max = 1;
+
         for (int i = 0; i < n; i++) {
-            System.arraycopy(arr[i], 0, result[i], 0, n);
+            int rowCount = 1;
+            int colCount = 1;
+
+            for (int j = 1; j < n; j++) {
+                // 행 검사
+                if (arr[i][j] == arr[i][j - 1]) {
+                    rowCount++;
+                } else {
+                    rowCount = 1;
+                }
+                max = Math.max(max, rowCount);
+
+                // 열 검사
+                if (arr[j][i] == arr[j - 1][i]) {
+                    colCount++;
+                } else {
+                    colCount = 1;
+                }
+                max = Math.max(max, colCount);
+            }
         }
 
-        char temp = result[fromX][fromY];
-        result[fromX][fromY] = result[toX][toY];
-        result[toX][toY] = temp;
-
-        return result;
+        return max;
     }
 
     public static char[][] inputArr(int n) {
@@ -67,105 +76,5 @@ public class Main {
             }
         }
         return arr;
-    }
-
-    public static int getMaxHorizontalCount(char[][] arr, int n, int nowY) {
-        int max = 1;
-        int count = 1;
-
-        for (int x = 0; x < n - 1; x++) {
-            if (arr[nowY][x] != arr[nowY][x + 1]) {
-                if (count > max) {
-                    max = count;
-                }
-                count = 1;
-                continue;
-            }
-            count++;
-        }
-
-        if (count > max) {
-            max = count;
-        }
-
-        return max;
-    }
-
-    public static int getMaxVerticalCount(char[][] arr, int n, int nowY) {
-        int max = 1;
-        int count = 1;
-
-        for (int i = 0; i < n - 1; i++) {
-            if (arr[i][nowY] != arr[i + 1][nowY]) {
-                if (count > max) {
-                    max = count;
-                }
-                count = 1;
-                continue;
-            }
-            count++;
-        }
-
-        if (count > max) {
-            max = count;
-        }
-
-        return max;
-    }
-
-    public static int getMaxDiagonalCount(char[][] arr, int n, int nowX, int nowY) {
-        int max = 1;
-        int count = 1;
-
-        // 기울기가 양수인 경우
-        int x, y;
-
-        y = Math.min(nowY + nowX, (n - 1));
-        x = nowX - Math.abs(y - nowY);
-
-        while (y > 0 && x < n - 1) {
-            if (arr[y][x] != arr[y - 1][x + 1]) {
-                if (count > max) {
-                    max = count;
-                }
-                count = 1;
-                x++;
-                y--;
-                continue;
-            }
-            count++;
-            x++;
-            y--;
-        }
-
-        if (count > max) {
-            max = count;
-        }
-
-        // 기울기가 음수인 경우
-        count = 1;
-        y = Math.max(nowY - nowX, 0);
-        x = nowX - Math.abs(y - nowY);
-
-        while (y < n - 1 && x < n - 1) {
-            if (arr[y][x] != arr[y + 1][x + 1]) {
-                if (count > max) {
-                    max = count;
-                }
-                count = 1;
-                x++;
-                y++;
-                continue;
-            }
-            count++;
-            x++;
-            y++;
-        }
-
-        if (count > max) {
-            max = count;
-        }
-
-        return max;
     }
 }
