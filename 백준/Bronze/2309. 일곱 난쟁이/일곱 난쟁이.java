@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -8,7 +7,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        List<Integer> numbers = new ArrayList<>(9);
+        List<Integer> numbers = new ArrayList<>();
         int sum = 0;
 
         for (int i = 0; i < 9; i++) {
@@ -17,29 +16,24 @@ public class Main {
             numbers.add(i, number);
         }
 
-        List<Integer> result = new LinkedList<>();
-
         // 전부 다 더하고 완탐으로 두 개 뺀 게 100이면 출력
         for (int i = 0; i < 8; i++) {
             for (int j = i + 1; j < 9; j++) {
                 int tempSum = numbers.get(i) + numbers.get(j);
                 if (sum - tempSum == 100) {
-                    for (int k = 0; k < 9; k++) {
-                        if (k != i && k != j) {
-                            result.add(numbers.get(k));
-                        }
-                    }
+                    numbers.remove(j);
+                    numbers.remove(i);
                     break;
                 }
             }
-            if (!result.isEmpty()) {
+            if (numbers.size() != 9) {
                 break;
             }
         }
 
-        result.sort(Integer::compareTo);
+        numbers.sort(Integer::compareTo);
         for (int i = 0; i < 7; i++) {
-            System.out.println(result.get(i));
+            System.out.println(numbers.get(i));
         }
     }
 }
