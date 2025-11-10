@@ -1,0 +1,8 @@
+-- 코드를 입력하세요
+-- ANIMAL_OUTS에는 존재하지만, ANIMAL_INS에는 존재하는 동물들
+SELECT ao.ANIMAL_ID, ao.NAME
+FROM ANIMAL_OUTS ao
+WHERE ao.ANIMAL_ID NOT IN (
+    SELECT ai.ANIMAL_ID
+    FROM ANIMAL_INS ai
+);
